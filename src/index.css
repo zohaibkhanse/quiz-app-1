@@ -20,6 +20,11 @@ body{
 }
 
 
+.container{
+  max-width: 800px;
+  margin: 2rem auto;
+}
+
 .quiz{
   max-width: 800px;
   margin: 2rem auto;
@@ -100,4 +105,27 @@ body{
 }
 .active-option-circle{
   background-color: #edf2f4;
+}
+
+/* ==========================
+// Result Styling
+===============================*/
+.quiz-result{
+  background-color: #2f3e46;
+  color:#fff;
+}
+.table{
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th, td{
+  text-align: start;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+  padding: 1rem;
+}
+
+.question-answer{
+  margin-top: 2rem;
+  background-color: #c7aaae;
 }

@@ -22,7 +22,7 @@ const questionData = [
         active: false
       },
       {
-        option: "Sundar Pichai",
+        option: "sundar pichai",
         active: false
       },
     ]
@@ -77,48 +77,72 @@ const questionData = [
 
   },
   {
-    question: "Who is the CEO of Facebook22?",
+    question: "What does RAM stands for",
 
     options: [
       {
-        option: "markzaker barg",
+        option: "Remove And Memory",
         active: false
       },
       
       {
-        option:  "Ahmad Ali",
+        option:  "random access memory",
         active: false
       },
       {
-        option:  "John son",
+        option:  "Running Access Memory",
         active: false
       },
       {
-        option: "Sundar Pichai",
+        option: "Restore Access Memory",
         active: false
       },
     ]
 
   },
   {
-    question: "Who is the CEO of Facebook333?",
+    question: "CTRL+T used in brower.",
 
     options: [
       {
-        option: "markzaker barg",
+        option: "To close window",
         active: false
       },
       
       {
-        option:  "Ahmad Ali",
+        option:  "to open new window",
         active: false
       },
       {
-        option:  "John son",
+        option:  "To resume window",
         active: false
       },
       {
-        option: "Sundar Pichai",
+        option: "To expend window",
+        active: false
+      },
+    ]
+
+  },
+  {
+    question: "CTRL+SHIFT+T used in brower.",
+
+    options: [
+      {
+        option: "To close window",
+        active: false
+      },
+      
+      {
+        option:  "to open new window",
+        active: false
+      },
+      {
+        option:  "to undo window",
+        active: false
+      },
+      {
+        option: "To redo window",
         active: false
       },
     ]
@@ -127,13 +151,18 @@ const questionData = [
   
 ]
 
-const correctOptions = ["sundar pichai", "hewlett packard",'markzaker barg'];
+const correctOptions = ["sundar pichai","hewlett packard","markzaker barg","random access memory","to open new window", "to undo window"];
 
-
+//==========================
+// Obtained and Total Marks
+//==========================
+let obtainedMarks = 0;
+let totalMarks = 6;
 
 export default function App(){
   const [selectedOption, setSeletedOptions] = useState('');
   const [quizNumber, setQuizNumber] = useState(0);
+  const [isFinished, setIsFinished] = useState(false);
 
   function handleSelectAnswer(answer, number, ){
     setSeletedOptions(answer);
@@ -142,43 +171,72 @@ export default function App(){
   }
   
 
-
- 
-
-
   function handleNextQuizBtn(){
-    setQuizNumber((num) => num === 4 ? 0 : ++num);
+    setQuizNumber((num) => num === 5 ? 0 : ++num);
   }
  
   function handleBackQuizBtn(){
-    setQuizNumber((num) => num === 0 ? 4 : --num);
+    setQuizNumber((num) => num === 0 ? 5 : --num);
   }
 
+  ///////////////////////////////////
+  // Finish Quize
+  //////////////////////////////
+  // Checking Each option and compare it with correct option;
+  function handleCheckAndMarkQuiz(){
+    questionData.forEach((el, quizNum )=> {
+      el.options.forEach(el => {
+        if(el.active){ 
+            // Compare the current option with correct option
+            if(correctOptions[quizNum] === el.option){
+            obtainedMarks += 1;
+          }
+        }
+      })
+    })
+  }
+
+
+
+
+
   return (
-    <div className="quiz"> 
-        <QuizQuestionAndOptions 
+    <div className="container">
+       {isFinished ? 
+       <div className="result"> 
+            <QuizResult obtainedMarks={obtainedMarks} totalMarks={totalMarks}/>
+            <QuestionAndAnswer questionData={questionData} correctOptions={correctOptions} />
+       </div>
+        :
+      <div className="quiz"> 
+       <QuizQuestionAndOptions 
         questionData={questionData[quizNumber]} 
   
         onSelectAnswer={handleSelectAnswer}
         />
         <QuizBtns
          onBackQuizBtn={handleBackQuizBtn}
+         onCheckAndMarkQuiz={handleCheckAndMarkQuiz}
          onNextQuizBtn={handleNextQuizBtn} 
          quizNumber={quizNumber} 
+         onSetIsFinished={setIsFinished}
           
           />
+          
+      </div>
+      }
     </div>
   )
 }
 
-function QuizBtns({onBackQuizBtn, onNextQuizBtn,quizNumber}){
+function QuizBtns({onBackQuizBtn, onNextQuizBtn, onCheckAndMarkQuiz,quizNumber, onSetIsFinished}){
   return (
     <>
         <div className="quiz__btns">
           {quizNumber !== 0 && <button onClick={() => onBackQuizBtn()} className="btn btn-back">Back {quizNumber}</button>}
-         {quizNumber !== 4 && <button onClick={() => onNextQuizBtn()} className="btn btn-next">Next {quizNumber+2} </button>}
+         {quizNumber !== 5 && <button onClick={() => onNextQuizBtn()} className="btn btn-next">Next {quizNumber+2} </button>}
         </div>
-         <button className="btn btn-finish">Finish Quiz to show result</button>
+         <button onClick={() =>{ onCheckAndMarkQuiz(); onSetIsFinished(true) }} className="btn btn-finish">Finish Quiz to show result</button>
     </>
   )
 }
@@ -189,7 +247,7 @@ function QuizQuestionAndOptions({questionData, onSelectAnswer}){
         <h1 className="question">Question: <span>{questionData.question}</span></h1>
         <div>
 
-          {questionData.options.map( (el, i) => <QuizOption onSelectAnswer={onSelectAnswer} option={el.option} active={el.active} currentNumber={i}  />)}
+          {questionData.options.map( (el, i) => <QuizOption onSelectAnswer={onSelectAnswer} option={el.option} active={el.active} currentNumber={i} key={i}  />)}
          
         </div>
     </div>
@@ -202,6 +260,61 @@ function QuizOption({onSelectAnswer, active, option, currentNumber, quizNumber})
   )
   ;
 }
+
+
+function QuizResult({totalMarks, obtainedMarks}){
+  return (
+    <div className="quiz-result">
+      <table className="table">
+          <tr>
+            <th>Total Marks</th>
+            <th>obtained Marks</th>
+            <th>Percentage</th>
+            <th>Remarks</th>
+          </tr>
+          <tr>
+            <td>{totalMarks}</td>
+            <td>{obtainedMarks}</td>
+            <td>{((obtainedMarks/totalMarks)*100).toFixed(1)}%</td>
+            <td><span className={`${obtainedMarks >= 4 ? "pass":"fail"}-flag`}>{obtainedMarks >= 4 ? "Pass" : "Fail"}</span></td>
+          </tr>
+      </table>
+    </div>
+  );
+}
+
+
+function QuestionAndAnswer({questionData, correctOptions}){
+  return (
+    <div> 
+     <table className="question-answer table">
+      <thead>
+        <tr>
+          <th>Question</th>
+          <th>Anwser</th>
+        </tr>
+      </thead>
+      <tbody>
+      { questionData.map((el, i) => 
+       <QuestionAnswer question={el.question} answer={correctOptions[i]} />)
+      }
+      </tbody>
+    </table>
+    </div>
+  );
+}
+
+function QuestionAnswer({question, answer}){
+  return (
+    <tr>
+          <td>{question}</td>
+          <td>{answer.toUpperCase()}</td>
+      </tr>
+  );
+}
+
+
+
 
 
 
